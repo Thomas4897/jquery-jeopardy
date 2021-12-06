@@ -3,6 +3,15 @@
 //* .appendChild
 const body = $("body");
 
+const title = $(`<div  id='title'>
+                    JEOPARDY!
+                </div>`);
+let score = 0;
+
+const yourScore = $(`<div  id='your-score'>
+                        YOUR SCORE :  $${score}
+                    </div>`);
+
 const cat1 = $(`<div class="categories" id='cat-1'>
                 </div>`);
 
@@ -23,39 +32,72 @@ const categories = $(".categories");
 const jeopardyBoard = $(`<div class="jeopardyBoard">
                         </div>`);
 
+const answer = $(`<div class="answer">
+                    Answer!
+                </div>`);
+
+const question = $(`<form class="question">
+                        <label for="questionInput">YOUR ANSWER </label>
+                        <input id="questionInput" type="text" />
+                        <input id="questionInputSubmit" type="submit" />
+                    </form`);
+// const questionSubmitBtn = $(`<input id="questionInputSubmit" type="submit" />`);
+
 const jeopardyBoardArry = [cat1, cat2, cat3, cat4, cat5];
 
-// $(categories).css({
-// 	margin: "20px",
-// 	padding: "20px",
-// 	border: "2px solid black",
-// 	backgroundColor: "#080b70",
-// 	color: "red",
-// });
+$(title).css({
+	padding: "15px",
+	fontSize: "50px",
+});
+
+$(yourScore).css({
+	marginBottom: "20px",
+});
 
 $(jeopardyBoard).css({
-	// margin: "20px",
 	display: "flex",
 	flexDirection: "row",
 });
 
+$(answer).css({
+	marginTop: "10px",
+});
+
+$(question).css({
+	marginTop: "20px",
+});
+
+body.append(title);
+body.append(yourScore);
 body.append(jeopardyBoard);
+body.append(answer);
+body.append(question);
 
 jeopardyBoard.append(cat1, cat2, cat3, cat4, cat5);
+
+function answers(id) {
+	const answers = document.querySelector(`#cat${id}`);
+
+	answers.addEventListener("click", function () {
+		console.log(`#cat${id}`, answers.innerText);
+	});
+}
 
 let dollarAmount = 100;
 
 for (let i = 0; i < jeopardyBoardArry.length; i++) {
 	for (let j = 0; j < 5; j++) {
-		const value = $(`<div class="cat${i + 1}" id="${dollarAmount}">
+		const id = `${i + 1}${j}`;
+		const value = $(`<div id="cat${id}">
             $${dollarAmount}
         </div>`);
 
 		$(value).css({
-			padding: "5px",
+			padding: "15px",
 			color: "#D7A04B",
 			backgroundColor: "#080b70",
 			border: "2px solid black",
+			fontSize: "30px",
 		});
 
 		jeopardyBoardArry[i].append(value);
@@ -65,6 +107,9 @@ for (let i = 0; i < jeopardyBoardArry.length; i++) {
 		} else {
 			dollarAmount += 200;
 		}
+
+		answers(id);
 	}
+
 	dollarAmount = 100;
 }

@@ -1,6 +1,24 @@
+body {
+	color: #d7a04b;
+	font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+	text-shadow: 2px 2px 2px black;
+	font-size: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .categories {
 	background-color: #080b70;
 	color: white;
 }
 
-/* D7A04B */
+#questionInput {
+	padding: 10px;
+	margin-left: 10px;
+}
+
+#questionInputSubmit {
+	margin: -6px;
+	padding: 10px;
+}
