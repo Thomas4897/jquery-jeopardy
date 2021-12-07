@@ -61,6 +61,8 @@ $(jeopardyBoard).css({
 
 $(answer).css({
 	marginTop: "10px",
+	color: "black",
+	textShadow: "0px 0px 0px",
 });
 
 $(question).css({
@@ -75,11 +77,37 @@ body.append(question);
 
 jeopardyBoard.append(cat1, cat2, cat3, cat4, cat5);
 
+//! Groups jeopardy data by set variable
+const main = async (value) => {
+	const rawJeopardyData = await fetch("jeopardy.json");
+	const jeopardyData = await rawJeopardyData.json();
+
+	const groupedData = _.groupBy(jeopardyData, "value");
+	const valueLength = groupedData[value].length;
+	console.log(valueLength);
+
+	const randomNumber = Math.floor(Math.random() * valueLength + 1);
+	console.log(randomNumber);
+
+	//? Gets a random obeject from the values array
+	console.log(groupedData[value][randomNumber]);
+
+	//? Gets the question key value from the object ^
+	console.log(groupedData[value][randomNumber]["question"]);
+
+	//? Sets the innerText of 'answer' div to the values 'question' value
+	answer.text(groupedData[value][randomNumber]["question"]);
+	// return groupedData[value];
+};
+
 function answers(id) {
 	const answers = document.querySelector(`#cat${id}`);
 
 	answers.addEventListener("click", function () {
 		console.log(`#cat${id}`, answers.innerText);
+		const answerValue = answers.innerText;
+
+		main(answerValue);
 	});
 }
 
