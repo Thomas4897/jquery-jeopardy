@@ -8,7 +8,7 @@ const title = $(`<div  id='title'>
                 </div>`);
 let score = 0;
 
-const yourScore = $(`<div  id='your-score'>
+let yourScore = $(`<div  id='your-score'>
                         YOUR SCORE :  $${score}
                     </div>`);
 
@@ -33,7 +33,7 @@ const jeopardyBoard = $(`<div class="jeopardyBoard">
                         </div>`);
 
 const answer = $(`<div class="answer">
-                    Answer!
+                    
                 </div>`);
 
 const question = $(`<form class="question">
@@ -41,33 +41,8 @@ const question = $(`<form class="question">
                         <input id="questionInput" type="text" />
                         <input id="questionInputSubmit" type="submit" />
                     </form`);
-// const questionSubmitBtn = $(`<input id="questionInputSubmit" type="submit" />`);
 
 const jeopardyBoardArry = [cat1, cat2, cat3, cat4, cat5];
-
-$(title).css({
-	padding: "15px",
-	fontSize: "50px",
-});
-
-$(yourScore).css({
-	marginBottom: "20px",
-});
-
-$(jeopardyBoard).css({
-	display: "flex",
-	flexDirection: "row",
-});
-
-$(answer).css({
-	marginTop: "10px",
-	color: "black",
-	textShadow: "0px 0px 0px",
-});
-
-$(question).css({
-	marginTop: "20px",
-});
 
 body.append(title);
 body.append(yourScore);
@@ -77,56 +52,18 @@ body.append(question);
 
 jeopardyBoard.append(cat1, cat2, cat3, cat4, cat5);
 
-//! Groups jeopardy data by set variable
-const main = async (value) => {
-	const rawJeopardyData = await fetch("jeopardy.json");
-	const jeopardyData = await rawJeopardyData.json();
-
-	const groupedData = _.groupBy(jeopardyData, "value");
-	const valueLength = groupedData[value].length;
-	console.log(valueLength);
-
-	const randomNumber = Math.floor(Math.random() * valueLength + 1);
-	console.log(randomNumber);
-
-	//? Gets a random obeject from the values array
-	console.log(groupedData[value][randomNumber]);
-
-	//? Gets the question key value from the object ^
-	console.log(groupedData[value][randomNumber]["question"]);
-
-	//? Sets the innerText of 'answer' div to the values 'question' value
-	answer.text(groupedData[value][randomNumber]["question"]);
-	// return groupedData[value];
-};
-
-function answers(id) {
-	const answers = document.querySelector(`#cat${id}`);
-
-	answers.addEventListener("click", function () {
-		console.log(`#cat${id}`, answers.innerText);
-		const answerValue = answers.innerText;
-
-		main(answerValue);
-	});
-}
+const questionForm = $(`.question`);
+const questionInput = $("#questionInput");
 
 let dollarAmount = 100;
 
+//! Creates the Jeopardy board
 for (let i = 0; i < jeopardyBoardArry.length; i++) {
 	for (let j = 0; j < 5; j++) {
 		const id = `${i + 1}${j}`;
 		const value = $(`<div id="cat${id}">
             $${dollarAmount}
         </div>`);
-
-		$(value).css({
-			padding: "15px",
-			color: "#D7A04B",
-			backgroundColor: "#080b70",
-			border: "2px solid black",
-			fontSize: "30px",
-		});
 
 		jeopardyBoardArry[i].append(value);
 
@@ -141,3 +78,77 @@ for (let i = 0; i < jeopardyBoardArry.length; i++) {
 
 	dollarAmount = 100;
 }
+
+let questionValue = "";
+
+//! Groups jeopardy data by set variable
+const main = async (value) => {
+	const rawJeopardyData = await fetch("jeopardy.json");
+	const jeopardyData = await rawJeopardyData.json();
+
+	const groupedData = _.groupBy(jeopardyData, "value");
+	const valueLength = groupedData[value].length;
+	// console.log(valueLength);
+
+	const randomNumber = Math.floor(Math.random() * valueLength + 1);
+	// console.log(randomNumber);
+
+	// //? Gets a random obeject from the values array
+	// console.log(groupedData[value][randomNumber]);
+
+	// //? Gets the question key value from the object ^
+	// console.log(groupedData[value][randomNumber]["question"]);
+
+	//? Sets the innerText of 'answer' div to the values 'question' value
+	answer.html(groupedData[value][randomNumber]["question"]);
+
+	questionValue = await groupedData[value][randomNumber]["answer"];
+	return questionValue;
+};
+
+let winnings = " ";
+
+//! Function when value is clicked on the Jeopardy board a corresponding question will be displayed
+function answers(id) {
+	const answers = document.querySelector(`#cat${id}`);
+
+	answers.addEventListener("click", async function () {
+		const answerValue = answers.innerText;
+
+		console.log("answers working");
+		await main(answerValue);
+		console.log(answerValue);
+		// winnings = answerValue;
+
+		for (num of answerValue) {
+			if (num === "$" || num === ",") {
+			} else {
+				winnings += num;
+			}
+		}
+
+		console.log(winnings);
+
+		console.log(questionValue);
+	});
+}
+
+questionForm.submit(function (event) {
+	event.preventDefault();
+	//* console.log(questionValue);
+	console.log(questionInput.val());
+	const answer = questionValue;
+	const question = questionInput.val();
+
+	score = Number(winnings) + Number(score);
+	winnings = "";
+
+	if (question.toLowerCase() === answer.toLowerCase()) {
+		yourScore.text(`Youe Score: $${score}`);
+
+		alert("Correct!");
+	} else {
+		alert("Incorrect!");
+	}
+	console.log("Form button working!");
+});
