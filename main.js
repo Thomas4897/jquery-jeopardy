@@ -190,7 +190,10 @@ questionForm.submit(function (event) {
 	}
 
 	if (count === 25) {
-		alert(`Congratulations You Have Won $${localStorage.score}!!!`);
+		alert(`Congratulations You Have Won $${localStorage.score} !!!`);
+		//! Clears the localStorage after game is over
 		localStorage.clear();
+		//! Refreshes the web page and resetting the board
+		location.reload();
 	}
 });
