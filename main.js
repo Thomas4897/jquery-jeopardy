@@ -1,7 +1,3 @@
-//! Build the layout of dollar amounts
-//* document.createElement
-//* .appendChild
-// localStorage.clear();
 const body = $("body");
 
 const title = $(`<div  id='title'>
@@ -64,33 +60,43 @@ jeopardyBoard.append(cat1, cat2, cat3, cat4, cat5);
 const questionForm = $(`.question`);
 const questionInput = $("#questionInput");
 
+//? Sets the initial dollar value to 100
 let dollarAmount = 100;
 
-//! Creates the Jeopardy board
+//! Build the layout of dollar amounts =====================================================
+//! Creates the Jeopardy 5x5 board
 for (let i = 0; i < jeopardyBoardArry.length; i++) {
 	for (let j = 0; j < 5; j++) {
+		//? defines the id as the div's xy position on the board
 		const id = `${i + 1}${j}`;
 		const value = $(`<div id="cat${id}">
             $${dollarAmount}
         </div>`);
 
+		//* Appends the new value to the div's innerText
 		jeopardyBoardArry[i].append(value);
 
+		//* If dollar amount is greater that 100 than add 200 to it
 		if (j < 1) {
 			dollarAmount += 100;
 		} else {
 			dollarAmount += 200;
 		}
 
+		//* Applies the answer gunction to each value div
 		answers(id);
 	}
 
+	//* Resets dollarAmount to 100 for the beginning of each colum
 	dollarAmount = 100;
 }
 
+//! ========================================================================================
+
+//? Initially sets questionValue to empty string
 let questionValue = "";
 
-//! Groups jeopardy data by set variable
+//! Pulls a jeopardy.json data for an object with a specific value =========================
 const main = async (value) => {
 	const rawJeopardyData = await fetch("jeopardy.json");
 	const jeopardyData = await rawJeopardyData.json();
@@ -117,19 +123,29 @@ const main = async (value) => {
 	return questionValue;
 };
 
+//? Initially sets winnings to empty string
 let winnings = "";
+//? Initially sets count to 0
+let count = 0;
 
-//! Function when value is clicked on the Jeopardy board a corresponding question will be displayed
+//! Creates and event listner for each jeopardyBoard div value ==========================
+//! Pulls the value from each jeopardy div
 function answers(id) {
 	const answers = document.querySelector(`#cat${id}`);
 
+	//? EventListner that when a jeopardyBoard div is clicked
+	//? it will pull its corresponding Answer for that value
 	answers.addEventListener("click", async function () {
 		winnings = "";
 		const answerValue = answers.innerText;
 
+		//? Calles the previous function main(value) which assigns an answer to that div
 		await main(answerValue);
 
-		// ? Adds the value
+		count++;
+		console.log(count);
+
+		// ? removes '$' and ',' from the value
 		for (num of answerValue) {
 			if (num === "$" || num === ",") {
 			} else {
@@ -140,6 +156,15 @@ function answers(id) {
 		console.log("answerValue", answerValue);
 		console.log("winnings", winnings);
 		console.log("questionValue", questionValue);
+
+		document.getElementById(`cat${id}`).style.pointerEvents = "none";
+
+		$(`#cat${id}`).css({
+			color: "#080b70",
+			textShadow: "none",
+			userSelect: "none",
+			cursor: "none",
+		});
 	});
 }
 
@@ -147,18 +172,25 @@ function answers(id) {
 questionForm.submit(function (event) {
 	event.preventDefault();
 
+	//? Converts both Value and Input into strings
 	const answer = questionValue.toString();
 	const question = questionInput.val().toString();
 
 	//? If question value eqauls answer value
 	if (question.toLowerCase() === answer.toLowerCase()) {
+		//? If the value and
 		localStorage.score = Number(winnings) + Number(localStorage.score);
-		//? Resets the value of 'Your score'
+		//? Sets the value of 'Your score' to 'score' value
 		yourScore.text(`Youe Score: $${localStorage.score}`);
 		winnings = "";
 		alert("Correct!");
 	} else {
 		winnings = "";
 		alert("Incorrect!");
+	}
+
+	if (count === 25) {
+		alert(`Congratulations You Have Won $${localStorage.score}!!!`);
+		localStorage.clear();
 	}
 });

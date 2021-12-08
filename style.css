@@ -38,6 +38,8 @@ body {
 
 .question {
 	margin-top: 20px;
+	display: flex;
+	align-items: center;
 }
 
 .categories {
@@ -51,6 +53,7 @@ body {
 	background-color: #080b70;
 	border: 2px solid black;
 	font-size: 30px;
+	cursor: pointer;
 }
 
 #questionInput {
@@ -61,4 +64,8 @@ body {
 #questionInputSubmit {
 	margin: -6px;
 	padding: 10px;
+	cursor: pointer;
+	background-color: #080b70;
+	color: #d7a04b;
+	font-weight: bold;
 }
