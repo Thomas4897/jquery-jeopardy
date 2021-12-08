@@ -118,8 +118,8 @@ function answers(id) {
 		console.log("answers working");
 		await main(answerValue);
 		console.log(answerValue);
-		// winnings = answerValue;
 
+		// ? Adds the value
 		for (num of answerValue) {
 			if (num === "$" || num === ",") {
 			} else {
@@ -133,22 +133,24 @@ function answers(id) {
 	});
 }
 
+//! Form submission that compares users answer witht the correct answer and awards points
 questionForm.submit(function (event) {
 	event.preventDefault();
-	//* console.log(questionValue);
-	console.log(questionInput.val());
+
 	const answer = questionValue;
 	const question = questionInput.val();
 
-	score = Number(winnings) + Number(score);
-	winnings = "";
-
+	//? If question value eqauls answer value
 	if (question.toLowerCase() === answer.toLowerCase()) {
+		score = Number(winnings) + Number(score);
+		winnings = "";
+
+		//? Resets the value of 'Your score'
 		yourScore.text(`Youe Score: $${score}`);
 
 		alert("Correct!");
 	} else {
+		winnings = "";
 		alert("Incorrect!");
 	}
-	console.log("Form button working!");
 });
