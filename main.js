@@ -1,16 +1,25 @@
 //! Build the layout of dollar amounts
 //* document.createElement
 //* .appendChild
+// localStorage.clear();
 const body = $("body");
 
 const title = $(`<div  id='title'>
                     JEOPARDY!
                 </div>`);
-let score = 0;
 
 let yourScore = $(`<div  id='your-score'>
-                        YOUR SCORE :  $${score}
+                        YOUR SCORE :  $${localStorage.score}
                     </div>`);
+
+const score = localStorage.getItem("score");
+
+if (score === null) {
+	localStorage.score = 0;
+	yourScore.text(`Youe Score: $${localStorage.score}`);
+} else {
+	yourScore.text(`Youe Score: $${localStorage.score}`);
+}
 
 const cat1 = $(`<div class="categories" id='cat-1'>
                 </div>`);
@@ -88,36 +97,37 @@ const main = async (value) => {
 
 	const groupedData = _.groupBy(jeopardyData, "value");
 	const valueLength = groupedData[value].length;
-	// console.log(valueLength);
 
 	const randomNumber = Math.floor(Math.random() * valueLength + 1);
-	// console.log(randomNumber);
 
 	// //? Gets a random obeject from the values array
-	// console.log(groupedData[value][randomNumber]);
+	//* console.log(groupedData[value][randomNumber]);
 
 	// //? Gets the question key value from the object ^
-	// console.log(groupedData[value][randomNumber]["question"]);
+	//* console.log(groupedData[value][randomNumber]["question"]);
 
 	//? Sets the innerText of 'answer' div to the values 'question' value
 	answer.html(groupedData[value][randomNumber]["question"]);
+	$(answer).css({
+		backgroundColor: "#d79f4be8",
+		border: "6px solid #080b70",
+	});
 
 	questionValue = await groupedData[value][randomNumber]["answer"];
 	return questionValue;
 };
 
-let winnings = " ";
+let winnings = "";
 
 //! Function when value is clicked on the Jeopardy board a corresponding question will be displayed
 function answers(id) {
 	const answers = document.querySelector(`#cat${id}`);
 
 	answers.addEventListener("click", async function () {
+		winnings = "";
 		const answerValue = answers.innerText;
 
-		console.log("answers working");
 		await main(answerValue);
-		console.log(answerValue);
 
 		// ? Adds the value
 		for (num of answerValue) {
@@ -127,9 +137,9 @@ function answers(id) {
 			}
 		}
 
-		console.log(winnings);
-
-		console.log(questionValue);
+		console.log("answerValue", answerValue);
+		console.log("winnings", winnings);
+		console.log("questionValue", questionValue);
 	});
 }
 
@@ -137,17 +147,15 @@ function answers(id) {
 questionForm.submit(function (event) {
 	event.preventDefault();
 
-	const answer = questionValue;
-	const question = questionInput.val();
+	const answer = questionValue.toString();
+	const question = questionInput.val().toString();
 
 	//? If question value eqauls answer value
 	if (question.toLowerCase() === answer.toLowerCase()) {
-		score = Number(winnings) + Number(score);
-		winnings = "";
-
+		localStorage.score = Number(winnings) + Number(localStorage.score);
 		//? Resets the value of 'Your score'
-		yourScore.text(`Youe Score: $${score}`);
-
+		yourScore.text(`Youe Score: $${localStorage.score}`);
+		winnings = "";
 		alert("Correct!");
 	} else {
 		winnings = "";
